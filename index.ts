@@ -1,4 +1,3 @@
-// Import necessary modules
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -6,19 +5,15 @@ import { nanoid } from 'nanoid';
 import connectDB from './config/db.js';
 import Url, { IUrl } from './models/url.js';
 
-// Load environment variables
 dotenv.config();
 
-// Connect to the database
 connectDB();
 
-// Initialize the Express app
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
-app.use(express.json()); // To parse JSON bodies
+app.use(express.json());
 
 // --- API Routes ---
 
@@ -36,15 +31,12 @@ app.post('/api/shorten', async (req: Request, res: Response) => {
     }
 
     try {
-        // Check if the URL has already been shortened
         let url: IUrl | null = await Url.findOne({ originalUrl });
 
         if (url) {
-            // If it exists, return the existing short URL
             res.json(url);
         } else {
-            // If not, create a new short URL
-            const urlId = nanoid(7); // Generate a unique short ID
+            const urlId = nanoid(7);
             const shortUrl = `${baseUrl}/${urlId}`;
 
             url = new Url({
@@ -72,11 +64,9 @@ app.get('/:urlId', async (req: Request, res: Response) => {
         const url: IUrl | null = await Url.findOne({ urlId: req.params.urlId });
 
         if (url) {
-            // Increment the click count
             url.clicks++;
             await url.save();
             
-            // Redirect to the original URL
             return res.redirect(url.originalUrl);
         } else {
             return res.status(404).json({ error: 'No URL found.' });
@@ -97,8 +87,6 @@ function isValidUrl(string: string): boolean {
     }
 }
 
-
-// Start the server
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
