@@ -9,21 +9,21 @@ This is a simple backend project that creates a URL shortener service using Node
 - Track the number of clicks for each short URL.
 
 ### Technologies Used
-- Node.js: JavaScript runtime environment.
+- **Node.js:** JavaScript runtime environment.
 
-- Express.js: Web framework for Node.js.
+- **Express.js:** Web framework for Node.js.
 
-- TypeScript: Superset of JavaScript that adds static types.
+- **TypeScript:** Superset of JavaScript that adds static types.
 
-- MongoDB: NoSQL database for storing URL data.
+- **MongoDB:** NoSQL database for storing URL data.
 
-- Mongoose: Object Data Modeling (ODM) library for MongoDB.
+- **Mongoose:** Object Data Modeling (ODM) library for MongoDB.
 
-- nanoid: For generating unique, URL-friendly short IDs.
+- **nanoid:** For generating unique, URL-friendly short IDs.
 
-- dotenv: For managing environment variables.
+- **dotenv:** For managing environment variables.
 
-- cors: For enabling Cross-Origin Resource Sharing.
+- **cors:** For enabling Cross-Origin Resource Sharing.
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (version 16 or higher).
@@ -31,13 +31,13 @@ This is a simple backend project that creates a URL shortener service using Node
 - [Docker](https://www.docker.com/products/docker-desktop/) (if you choose the local MongoDB option).
 
 ### Getting Started
-##### 1. Clone the Repository
+#### 1. Clone the Repository
 ```
 git clone <repository-url>
 cd url-shortener-ts
 ```
 
-##### 2. Configure Your Environment
+#### 2. Configure Your Environment
 Create a `.env` file in the root directory and add the following variables:
 ```
 PORT=5000
@@ -45,44 +45,44 @@ BASE_URL="http://localhost:5000"
 MONGO_URI=
 ```
 
-##### 3. Choose and Configure Your Database
+#### 3. Choose and Configure Your Database
 You have two options for your MongoDB database. Choose one and configure your `MONGO_URI` in the `.env` file accordingly.
 
-###### Option A: Use Docker for Local Development (Recommended)
+##### Option A: Use Docker for Local Development (Recommended)
 This is the quickest way to get a database running locally.
 
-  ###### 1. Start the MongoDB Container:
+  ##### 1. Start the MongoDB Container:
   Make sure Docker is running, then execute the following command in your terminal:
   ```
   docker-compose up -d
   ```
 
-  ###### 2. Configure `.env`:
+  ##### 2. Configure `.env`:
   Use the following connection string in your `.env` file to connect to the Docker container:
   ```
   MONGO_URI="mongodb://user:password@localhost:27017/url-shortener?authSource=admin"
   ```
 
-  ###### Option B: Use MongoDB Atlas (Cloud Database)
+  ##### Option B: Use MongoDB Atlas (Cloud Database)
   This option is great for staging or production environments.
 
-  ###### 1. Set up Atlas:
+  ##### 1. Set up Atlas:
 
-    - Create a free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+  - Create a free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
 
-    - Create a new cluster.
+  - Create a new cluster.
 
-    - Create a database user and make a note of the username and password.
+  - Create a database user and make a note of the username and password.
 
-    - Whitelist your IP address to allow connections to your cluster.
+  - Whitelist your IP address to allow connections to your cluster.
 
-  ###### 2. Configure `.env`:
+  ##### 2. Configure `.env`:
   Get your connection string from the Atlas dashboard and update it with your credentials. It will look like this:
   ```
   MONGO_URI="mongodb+srv://<user>:<password>@<cluster-url>/url-shortener?retryWrites=true&w=majority"
   ```
 
-##### 4. Install Dependencies
+#### 4. Install Dependencies
 Once your database is configured, install the project dependencies:
 ```
 npm install
