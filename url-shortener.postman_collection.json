@@ -1,0 +1,96 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6",
+		"name": "URL Shortener API",
+		"description": "A collection of requests for testing the Node.js + TypeScript URL Shortener API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a Short URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// This script runs after the request is sent.",
+							"// It parses the JSON response body.",
+							"var jsonData = pm.response.json();",
+							"",
+							"// It gets the 'urlId' from the response and saves it as a collection variable.",
+							"// This allows the next request ('Redirect') to use this ID automatically.",
+							"if (jsonData && jsonData.urlId) {",
+							"    pm.collectionVariables.set(\"urlId\", jsonData.urlId);",
+							"    console.log(\"Saved urlId: \" + jsonData.urlId);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"originalUrl\": \"https://www.mongodb.com/docs/manual/introduction/\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/shorten",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"shorten"
+					]
+				},
+				"description": "Takes a long URL and returns a shortened version."
+			},
+			"response": []
+		},
+		{
+			"name": "Redirect to Original URL",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/{{urlId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"{{urlId}}"
+					]
+				},
+				"description": "Takes a short URL ID and redirects to the original long URL. The urlId is automatically saved from the 'Create' request."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string",
+			"description": "The base URL of the server."
+		},
+		{
+			"key": "urlId",
+			"value": "",
+			"type": "string",
+			"description": "The ID of the shortened URL (this will be set automatically by the 'Create' request)."
+		}
+	]
+}
