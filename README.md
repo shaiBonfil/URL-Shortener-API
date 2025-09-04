@@ -1,14 +1,16 @@
 # Node.js URL Shortener API (TypeScript)
-This is a simple backend project that creates a URL shortener service using Node.js, Express, MongoDB, and TypeScript, with a Redis caching layer for performance.
+This is a backend project that creates a URL shortener service using Node.js, Express, MongoDB, and TypeScript, with a Redis caching layer for performance and support for temporary links.
 
 ## Features
-- Generate a short URL from a long original URL.
+- Generate permanent or temporary a short URL from a long original URL.
 
 - Redirect from a short URL to the original URL.
 
 - Cache frequently accessed URLs with Redis for faster redirects.
 
 - Track the number of clicks for each short URL.
+
+- Automatically delete expired links with a daily background job.
 
 ## Technologies Used
 - **Node.js:** JavaScript runtime environment.
@@ -24,6 +26,8 @@ This is a simple backend project that creates a URL shortener service using Node
 - **Mongoose:** Object Data Modeling (ODM) library for MongoDB.
 
 - **nanoid:** For generating unique, URL-friendly short IDs.
+
+- **node-cron:** For scheduling background cleanup jobs.
 
 - **dotenv:** For managing environment variables.
 
@@ -120,9 +124,13 @@ The server will start on the port specified in your `.env` file (default is 5000
 - **Body:**
 ```
 {
-  "originalUrl": "[https://www.example.com/a-very-long-url-to-shorten](https://www.example.com/a-very-long-url-to-shorten)"
+  "originalUrl": "[https://www.example.com/a-very-long-url-to-shorten](https://www.example.com/a-very-long-url-to-shorten)",
+  "ttl": 24
 }
 ```
+  - `originalUrl` (string, required): The URL to shorten.
+  - `ttl` (number, optional): The "Time To Live" in hours. If provided, the link will expire after this duration. If omitted, the link will be permanent.
+
 - **Success Response (201):**
 ```
 {
@@ -131,10 +139,12 @@ The server will start on the port specified in your `.env` file (default is 5000
   "urlId": "abcdefg",
   "clicks": 0,
   "date": "2025-09-03T22:13:00.000Z",
+  "expiresAt": "2025-09-04T22:13:00.000Z",
   "_id": "...",
   "__v": 0
 }
 ```
+
 #### Redirect to Original URL
 - **URL:** `/:urlId`
 
@@ -142,4 +152,4 @@ The server will start on the port specified in your `.env` file (default is 5000
 
 - **Example:** `http://localhost:5000/abcdefg`
 
-- **Action:** Redirects the user to the `originalUrl` and increments the click count.
+- **Action:** Redirects the user to the `originalUrl` and increments the click count. If the link has expired, it returns a `410 Gone` status with an error message.

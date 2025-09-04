@@ -7,6 +7,7 @@ export interface IUrl extends Document {
     shortUrl: string;
     clicks: number;
     date: Date;
+    expiresAt: Date | null; // Can be null for links that never expire
 }
 
 const urlSchema: Schema<IUrl> = new mongoose.Schema({
@@ -32,6 +33,10 @@ const urlSchema: Schema<IUrl> = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now,
+    },
+    expiresAt: {
+        type: Date,
+        default: null, // Default to null for permanent links
     },
 });
 

@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "Create a Short URL",
+			"name": "Create a Permanent Short URL",
 			"event": [
 				{
 					"listen": "test",
@@ -17,7 +17,7 @@
 							"// It parses the JSON response body.",
 							"var jsonData = pm.response.json();",
 							"",
-							"// It gets the 'urlId' from the response and saves it as a collection variable.",
+							"// It gets the 'urlId' from the response and saves it as a collection variable (urlId).",
 							"// This allows the next request ('Redirect') to use this ID automatically.",
 							"if (jsonData && jsonData.urlId) {",
 							"    pm.collectionVariables.set(\"urlId\", jsonData.urlId);",
@@ -40,6 +40,60 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"originalUrl\": \"https://www.mongodb.com/docs/manual/introduction/\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/shorten",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"shorten"
+					]
+				},
+				"description": "Takes a long URL and returns a shortened version."
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Temporary Short URL (Expires in 1 hour)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// This script runs after the request is sent.",
+							"// It parses the JSON response body.",
+							"var jsonData = pm.response.json();",
+							"",
+							"// It gets the 'urlId' from the response and saves it as a collection variable (tempUrlId).",
+							"// This allows the next request ('Redirect') to use this ID automatically.",
+							"if (jsonData && jsonData.urlId) {",
+							"    pm.collectionVariables.set(\"tempUrlId\", jsonData.urlId);",
+							"    console.log(\"Saved tempUrlId: \" + jsonData.urlId);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"originalUrl\": \"https://redis.io/docs/latest/\",\n    \"ttl\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -90,7 +144,13 @@
 			"key": "urlId",
 			"value": "",
 			"type": "string",
-			"description": "The ID of the shortened URL (this will be set automatically by the 'Create' request)."
+			"description": "The ID of the permanent shortened URL (this will be set automatically by the 'Create' request)."
+		},
+		{
+			"key": "tempUrlId",
+			"value": "",
+			"type": "string",
+			"description": "The ID of the temporary shortened URL (this will be set automatically by the 'Create' request)."
 		}
 	]
 }
