@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { nanoid } from 'nanoid';
 import connectDB from './config/db.js';
+import redisClient from './config/redis.js';
 import Url, { IUrl } from './models/url.js';
 
 dotenv.config();
@@ -61,12 +62,25 @@ app.post('/api/shorten', async (req: Request, res: Response) => {
  */
 app.get('/:urlId', async (req: Request, res: Response) => {
     try {
-        const url: IUrl | null = await Url.findOne({ urlId: req.params.urlId });
+        const { urlId } = req.params;
+
+        const cachedUrl = await redisClient.get(urlId);
+
+        if (cachedUrl) {
+            console.log(`CACHE HIT for ${urlId}`);
+            Url.updateOne({ urlId }, { $inc: { clicks: 1 } }).exec();
+            return res.redirect(cachedUrl);
+        }
+
+        console.log(`CACHE MISS for ${urlId}`);
+        const url: IUrl | null = await Url.findOne({ urlId });
 
         if (url) {
+            // Set an expiration time of 24 hours (86400 seconds)
+            await redisClient.set(urlId, url.originalUrl, { EX: 86400 });
+
             url.clicks++;
             await url.save();
-            
             return res.redirect(url.originalUrl);
         } else {
             return res.status(404).json({ error: 'No URL found.' });
@@ -88,5 +102,5 @@ function isValidUrl(string: string): boolean {
 }
 
 app.listen(port, () => {
-    console.log(`Server is running on port: ${port}`);
+    console.log(`✅ Server is running on port: ${port}`);
 });

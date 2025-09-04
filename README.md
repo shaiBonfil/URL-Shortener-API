@@ -1,10 +1,12 @@
 # Node.js URL Shortener API (TypeScript)
-This is a simple backend project that creates a URL shortener service using Node.js, Express, MongoDB, and TypeScript.
+This is a simple backend project that creates a URL shortener service using Node.js, Express, MongoDB, and TypeScript, with a Redis caching layer for performance.
 
 ## Features
 - Generate a short URL from a long original URL.
 
 - Redirect from a short URL to the original URL.
+
+- Cache frequently accessed URLs with Redis for faster redirects.
 
 - Track the number of clicks for each short URL.
 
@@ -17,6 +19,8 @@ This is a simple backend project that creates a URL shortener service using Node
 
 - **MongoDB:** NoSQL database for storing URL data.
 
+- **Redis:** In-memory data store used for caching.
+
 - **Mongoose:** Object Data Modeling (ODM) library for MongoDB.
 
 - **nanoid:** For generating unique, URL-friendly short IDs.
@@ -28,7 +32,7 @@ This is a simple backend project that creates a URL shortener service using Node
 ## Prerequisites
 - [Node.js](https://nodejs.org/) (version 16 or higher).
 
-- [Docker](https://www.docker.com/products/docker-desktop/) (if you choose the local MongoDB option).
+- [Docker](https://www.docker.com/products/docker-desktop/) & [Docker Compose](https://docs.docker.com/compose/install/) (if you choose the local MongoDB option).
 
 ## Getting Started
 ### 1. Clone the Repository
@@ -43,6 +47,7 @@ Create a `.env` file in the root directory and add the following variables:
 PORT=5000
 BASE_URL="http://localhost:5000"
 MONGO_URI=
+REDIS_URL="redis://localhost:6379"
 ```
 
 ### 3. Choose and Configure Your Database

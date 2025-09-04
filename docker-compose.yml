@@ -3,6 +3,7 @@ services:
   mongo:
     image: mongo:latest
     container_name: url-shortener-mongo
+    restart: always
     ports:
       - "27017:27017"
     volumes:
@@ -11,5 +12,15 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 
+  redis:
+    image: redis:7-alpine
+    container_name: url-shortener-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
 volumes:
   mongo-data:
+  redis-data:
